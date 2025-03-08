@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Additional styles for the application */
+      .text-success {
+        color: #10b981;
+      }
+      .text-warning {
+        color: #f59e0b;
+      }
+      .text-danger {
+        color: #ef4444;
+      }
+      .text-muted {
+        color: #9ca3af;
+      }
+
+      /* Table styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+      }
+
+      th,
+      td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f9fafb;
+        font-weight: 600;
+      }
+
+      tr:hover {
+        background-color: #f3f4f6;
+      }
+
+      /* Pagination styles */
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+      }
+
+      .pagination button {
+        margin: 0 0.25rem;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        background-color: white;
+        color: #374151;
+      }
+
+      .pagination button:hover:not(:disabled) {
+        background-color: #f3f4f6;
+      }
+
+      .pagination button:disabled {
+        color: #9ca3af;
+        cursor: not-allowed;
+      }
+
+      /* Checking animation */
+      .checking {
+        display: inline-block;
+        animation: pulse 1.5s infinite ease-in-out;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      /* Form styles */
+      form label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      form input,
+      form select,
+      form textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+      }
+
+      form button {
+        background-color: #2563eb;
+        color: white;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+      }
+
+      form button:hover:not(:disabled) {
+        background-color: #1d4ed8;
+      }
+
+      form button:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-100">
+    <!-- Login Screen -->
+    <div
+      id="login-screen"
+      class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8"
+    >
+      <div class="max-w-md w-full space-y-8">
+        <div>
+          <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Admin Login
+          </h2>
+          <p class="mt-2 text-center text-sm text-gray-600">
+            Masukkan kredensial untuk mengakses panel admin
+          </p>
+        </div>
+        <form class="mt-8 space-y-6" onsubmit="login(event)">
+          <div class="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label for="email-address" class="sr-only">Email address</label>
+              <input
+                id="email-address"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Email address"
+              />
+            </div>
+            <div>
+              <label for="password" class="sr-only">Password</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label for="remember-me" class="ml-2 block text-sm text-gray-900"
+                >Remember me</label
+              >
+            </div>
+            <div class="text-sm">
+              <a href="#" class="font-medium text-blue-600 hover:text-blue-500"
+                >Forgot your password?</a
+              >
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <!-- Lock icon -->
+                <svg
+                  class="h-5 w-5 text-blue-500 group-hover:text-blue-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </span>
+              Sign in
+            </button>
+          </div>
+
+          <div id="login-error" class="hidden">
+            <p class="text-red-600 text-sm text-center">
+              Email atau password tidak valid!
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin Panel (Hidden by default) -->
+    <div id="admin-panel" class="hidden">
+      <!-- Navbar -->
+      <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4">
+          <div class="flex justify-between h-16">
+            <div class="flex">
+              <div class="flex-shrink-0 flex items-center">
+                <span class="text-xl font-bold text-gray-900">Admin Panel</span>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <button
+                class="p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+              >
+                <span class="sr-only">Notifications</span>
+                <svg
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+              </button>
+              <div class="ml-3 relative">
+                <div>
+                  <button
+                    id="user-menu-button"
+                    type="button"
+                    class="max-w-xs flex items-center text-sm rounded-full focus:outline-none"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                    onclick="toggleUserMenu()"
+                  >
+                    <span class="sr-only">Open user menu</span>
+                    <div
+                      class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-700"
+                    >
+                      <span id="user-initial">A</span>
+                    </div>
+                    <span id="username-display" class="ml-2">Admin</span>
+                  </button>
+                </div>
+
+                <!-- Dropdown menu -->
+                <div
+                  id="user-dropdown"
+                  class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 z-10"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabindex="-1"
+                >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    >Your Profile</a
+                  >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    >Settings</a
+                  >
+                  <a
+                    href="#"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    onclick="logout()"
+                    >Sign out</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main content -->
+      <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Menu Tabs -->
+        <div class="border-b border-gray-200 mb-6">
+          <nav class="-mb-px flex">
+            <button
+              onclick="setActiveTab('themes')"
+              id="themes-tab"
+              class="mr-8 py-4 px-1 border-b-2 border-blue-500 text-blue-600"
+            >
+              Themes
+            </button>
+            <button
+              onclick="setActiveTab('addDomain')"
+              id="addDomain-tab"
+              class="mr-8 py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            >
+              Add Domain
+            </button>
+            <button
+              onclick="setActiveTab('redirect')"
+              id="redirect-tab"
+              class="mr-8 py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            >
+              List Domain
+            </button>
+          </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="bg-white shadow rounded-lg p-6">
+          <!-- Themes Tab -->
+          <div id="themes-content" class="tab-content">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">Pilih Theme</h2>
+            <div class="flex space-x-4">
+              <div
+                onclick="handleThemeChange('Lazada')"
+                id="lazada-theme"
+                class="cursor-pointer p-4 border rounded-lg border-blue-500 bg-blue-50"
+              >
+                <div
+                  class="w-40 h-32 bg-orange-500 flex items-center justify-center text-white font-bold"
+                >
+                  Lazada Theme
+                </div>
+                <div class="mt-2 text-center">Lazada</div>
+              </div>
+
+              <div
+                onclick="handleThemeChange('Shopee')"
+                id="shopee-theme"
+                class="cursor-pointer p-4 border rounded-lg border-gray-200"
+              >
+                <div
+                  class="w-40 h-32 bg-orange-600 flex items-center justify-center text-white font-bold"
+                >
+                  Shopee Theme
+                </div>
+                <div class="mt-2 text-center">Shopee</div>
+              </div>
+
+              <div
+                onclick="handleThemeChange('Square')"
+                id="square-theme"
+                class="cursor-pointer p-4 border rounded-lg border-gray-200"
+              >
+                <div
+                  class="w-40 h-32 bg-blue-500 flex items-center justify-center text-white font-bold"
+                >
+                  Square Theme
+                </div>
+                <div class="mt-2 text-center">Square</div>
+              </div>
+            </div>
+
+            <!-- Theme Configuration Form Container -->
+            <div id="theme-form-container" class="mt-8 hidden">
+              <h3 class="text-lg font-medium text-gray-900 mb-4">
+                Configure <span id="selected-theme-name">Theme</span>
+              </h3>
+
+              <!-- Single Form Container yang akan diisi secara dinamis -->
+              <div id="dynamic-theme-form" class="space-y-4">
+                <!-- Form akan diisi melalui JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Add Domain Tab -->
+          <div id="addDomain-content" class="tab-content hidden">
+            <h2 class="text-lg font-medium text-gray-900 mb-4">
+              Tambah Domain
+            </h2>
+            <div class="form-container">
+              <h1>Add Domain to Cloudflare</h1>
+              <form
+                id="addDomainForm"
+                method="POST"
+                action="add_domain.php"
+                onsubmit="addDomain(event)"
+              >
+                <!-- Domain Input -->
+                <div class="form-group mb-4">
+                  <label
+                    for="domain"
+                    class="block text-sm font-medium text-gray-700"
+                    >Domain Name:</label
+                  >
+                  <input
+                    type="text"
+                    name="domain"
+                    id="domain"
+                    placeholder="Enter your domain"
+                    required
+                    class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Submit Button -->
+                <button
+                  type="submit"
+                  class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Add Domain and Create A Records
+                </button>
+              </form>
+
+              <!-- Loading Spinner (when the form is being submitted) -->
+              <div id="loading-spinner" class="hidden mt-4 text-center">
+                <svg
+                  class="animate-spin h-5 w-5 text-blue-500 mx-auto"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 3v18m9-9H3"
+                  ></path>
+                </svg>
+                <p class="text-sm text-gray-500">Processing...</p>
+              </div>
+
+              <!-- Hasil respons akan ditampilkan di sini -->
+              <div id="response-container" class="hidden mt-4 p-4 rounded-md">
+                <p id="response-message" class="text-sm"></p>
+              </div>
+
+              <!-- Nameservers -->
+              <div id="nameservers-container" class="hidden mt-4">
+                <h3 class="font-medium text-lg text-gray-800">Nameservers:</h3>
+                <ul id="nameservers-list" class="list-disc pl-5"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Redirect Tab -->
+          <div id="redirect-content" class="tab-content hidden">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-lg font-medium text-gray-900">
+                Domain List & Redirect Configuration
+              </h2>
+              <button
+                id="check-status-btn"
+                class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+              >
+                Check All Domains Status
+              </button>
+            </div>
+
+            <!-- Status Message -->
+            <div id="status-message" class="hidden mb-4"></div>
+
+            <!-- Redirect Table -->
+            <div class="overflow-x-auto">
+              <table role="table" aria-labelledby="redirect-table">
+                <thead role="rowgroup">
+                  <tr>
+                    <th scope="col">
+                      <input
+                        type="checkbox"
+                        id="select-all"
+                        onclick="toggleSelectAll(this)"
+                      />
+                    </th>
+                    <th scope="col">Domain</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Redirect URL</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody role="rowgroup" id="redirect-table-body">
+                  <!-- Data baris akan di-render di sini -->
+                </tbody>
+              </table>
+
+              <!-- Pagination -->
+              <div
+                id="pagination"
+                class="pagination"
+                role="navigation"
+                aria-label="Pagination Navigation"
+              >
+                <button
+                  id="previous"
+                  class="previous"
+                  disabled
+                  aria-label="Previous Page"
+                >
+                  &laquo; Previous
+                </button>
+                <div
+                  class="page-numbers"
+                  role="group"
+                  aria-label="Page Numbers"
+                >
+                  <!-- Pagination numbers will be generated dynamically -->
+                </div>
+                <button id="next" class="next" disabled aria-label="Next Page">
+                  Next &raquo;
+                </button>
+              </div>
+            </div>
+
+            <!-- Redirect Edit Form -->
+            <div class="mt-6 p-4 border rounded-lg bg-gray-50">
+              <h3 class="text-md font-medium text-gray-900 mb-2">
+                Edit Redirect URL
+              </h3>
+              <form id="redirect-form" class="space-y-4">
+                <div>
+                  <label
+                    for="edit-redirect-url"
+                    class="block text-sm font-medium text-gray-700"
+                    >Redirect URL:</label
+                  >
+                  <input
+                    type="text"
+                    id="edit-redirect-url"
+                    placeholder="Enter redirect URL (https://...)"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+
+                <!-- Tombol Submit -->
+                <button
+                  type="submit"
+                  id="submit-btn"
+                  disabled
+                  class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+                >
+                  Update Redirect URLs
+                </button>
+
+                <!-- Spinner (opsional) -->
+                <div
+                  id="redirect-loading-spinner"
+                  class="hidden inline-flex items-center"
+                >
+                  <svg
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-500"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Processing...
+                </div>
+
+                <!-- Feedback Message -->
+                <div id="feedback-message" class="hidden mt-2 p-2 rounded">
+                  <span id="feedback-text"></span>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
